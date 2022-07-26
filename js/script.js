@@ -45,13 +45,10 @@ buttonDraw.addEventListener("click", (event) => {
 });
 
 function getDeck() {
-  // console.log("in fetch deck");
   fetch("https://apis.scrimba.com/deckofcards/api/deck/new/shuffle/")
     .then((res) => res.json())
     .then((data) => {
-      // console.log(data);
       deckId = data.deck_id;
-      console.log(deckId);
 
       // now that the deck is available for usage, the draw button should be enabled
       buttonDraw.disabled = false;
@@ -66,6 +63,9 @@ function drawCards(id = deckId, cardAmount = CARDS_TO_DRAW) {
     .then((data) => {
       playerCard = createCardObj(data.cards[0]);
       computerCard = createCardObj(data.cards[1]);
+
+      // Player should not be able to press the draw button until the next round begins and the score is displayed
+      buttonDraw.disabled = true;
 
       createCardHtml(
         playerCardDiv,
@@ -84,13 +84,9 @@ function drawCards(id = deckId, cardAmount = CARDS_TO_DRAW) {
 
         if (round === 1) {
           roundWinnerAnimationOnce();
-          console.log("ROUND IS 1");
         } else {
           roundWinnerAnimation(score);
         }
-
-        round++;
-        console.log(round);
       }, 400);
     });
 }
@@ -106,7 +102,6 @@ function createCardObj(obj) {
 
 function createCardHtml(parent, src, alt) {
   parent.innerHTML = "";
-  console.log(parent);
   const imgElem = createElement("img");
   imgElem.setAttribute("src", src);
   imgElem.setAttribute("alt", alt);
@@ -157,9 +152,12 @@ function updateScore(score) {
     scoreAnimation(playerScore, roundMessage, "You win this round!");
   } else {
     scoreAnimation(computerScore, roundMessage, "You lose this round :(");
-    // roundMessage.textContent = "You lose this round :(";
-    // computerScore.textContent = +computerScore.textContent + 1;
   }
+
+  setTimeout(() => {
+    round++;
+    buttonDraw.disabled = false;
+  }, 2000);
 }
 
 function scoreAnimation(player, messageElem, message) {
