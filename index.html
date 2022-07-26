@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>War</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cormorant+SC:wght@300;400;600&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="css/styles.css" />
+    <script src="js/script.js" defer></script>
+  </head>
+  <body>
+    <div class="centered">
+      <main class="container container-flex">
+        <div class="header">
+          <button id="btn-new-deck" class="btn btn-secondary">
+            <span id="span-new-deck">New Deck</span>
+          </button>
+        </div>
+        <div class="main-content">
+          <h1>War!</h1>
+          <p id="main-round-winner" class="main-round-winner-initial"></p>
+          <div id="cards" class="cards">
+            <div id="card-player"></div>
+            <div id="card-computer"></div>
+          </div>
+          <div class="main-score">
+            <div id="player-score">
+              <p>Me: <span class="span-score">0</span></p>
+            </div>
+            <div id="computer-score">
+              <p>Computer: <span class="span-score">0</span></p>
+            </div>
+          </div>
+        </div>
+        <div class="draw">
+          <button id="btn-draw-cards" class="btn-wide btn-main">Draw</button>
+        </div>
+      </main>
+    </div>
+  </body>
+</html>
