@@ -217,12 +217,13 @@ main.container-flex {
 
 .header h3 {
   margin: 0;
+  font-size: 1.5rem;
   display: flex;
   align-items: center;
 }
 
 .remaining-cards {
-  margin-left: 0.5rem;
+  font-size: 1.5rem;
 }
 
 /* MAIN CONTENT */
@@ -273,6 +274,7 @@ main.container-flex {
 }
 
 /* score */
+
 .main-score {
   width: 100%;
   display: flex;

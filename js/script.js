@@ -2,8 +2,6 @@ const CARDS_TO_DRAW = 2;
 let playerCard;
 let computerCard;
 let round = 1;
-let dataObj;
-
 const cardSequence = {
   2: 2,
   3: 3,
@@ -52,12 +50,17 @@ function getDeck() {
     .then((res) => res.json())
     .then((data) => {
       deckId = data.deck_id;
-      dataObj = data;
 
       // now that the deck is available for usage, the draw button should be enabled
       buttonDraw.disabled = false;
-    });
 
+      updateTextHtml(
+        document.getElementById("remaining-cards-header"),
+        "Remaining Cards:"
+      );
+
+      updateTextHtml(remainingCards, data.remaining);
+    });
   updateButtonText(buttonDeck, "Shuffle");
 }
 
@@ -73,7 +76,7 @@ function drawCards(id = deckId, cardAmount = CARDS_TO_DRAW) {
       // Player should not be able to press the draw button until the next round begins and the score is displayed
       buttonDraw.disabled = true;
 
-      updateDeckCountHtml(data.remaining);
+      updateTextHtml(remainingCards, data.remaining);
 
       createCardHtml(
         playerCardDiv,
@@ -91,7 +94,7 @@ function drawCards(id = deckId, cardAmount = CARDS_TO_DRAW) {
         const score = getHigherScore(playerCard, computerCard);
 
         if (round === 1) {
-          roundWinnerAnimationOnce();
+          roundWinnerAnimationOnce(score);
         } else {
           roundWinnerAnimation(score);
         }
@@ -114,7 +117,11 @@ function createCardHtml(parent, src, alt) {
   imgElem.setAttribute("src", src);
   imgElem.setAttribute("alt", alt);
   parent.style.border = "none";
-  parent.appendChild(imgElem);
+  setTimeout(() => {
+    parent.appendChild(imgElem);
+  }, 700);
+
+  hideShowAnimation(parent, "span-score-hide", "span-score-show", 300);
 }
 
 function createElement(type) {
@@ -133,8 +140,10 @@ function getHigherScore(card1, card2) {
 }
 
 function roundWinnerAnimationOnce(score) {
-  roundMessage.classList.remove("main-round-winner-initial");
-  roundMessage.classList.add("main-round-winner-show");
+  setTimeout(() => {
+    roundMessage.classList.add("main-round-winner-show");
+    roundMessage.classList.remove("main-round-winner-initial");
+  }, 600);
 
   updateScore(score);
 }
@@ -147,7 +156,7 @@ function roundWinnerAnimation(score) {
     () => {
       setTimeout(() => {
         roundMessage.classList.add("main-round-winner-show");
-      }, 500);
+      }, 800);
 
       updateScore(score);
     },
@@ -171,25 +180,32 @@ function updateScore(score) {
 }
 
 function scoreAnimation(player, messageElem, message) {
-  player.classList.remove("span-score-show");
-  player.classList.add("span-score-hide");
-  player.addEventListener(
-    "animationend",
-    () => {
-      setTimeout(() => {
-        player.classList.add("span-score-show");
-      }, 500);
-      messageElem.textContent = message;
-      player.textContent = +player.textContent + 1;
-    },
-    { once: true }
-  );
+  hideShowAnimation(player, "span-score-hide", "span-score-show");
+  setTimeout(() => {
+    messageElem.textContent = message;
+    player.textContent = +player.textContent + 1;
+  }, 500);
 }
 
-function updateDeckCountHtml(remaining) {
-  remainingCards.textContent = remaining;
+function updateTextHtml(element, remaining) {
+  element.textContent = remaining;
 }
 
 function updateButtonText(button, text) {
   button.textContent = text;
+}
+
+function hideShowAnimation(element, hide, show, timeout = 500) {
+  element.classList.remove(show);
+  element.classList.add(hide);
+  element.addEventListener(
+    "animationend",
+    () => {
+      setTimeout(() => {
+        element.classList.add(show);
+        element.classList.remove(hide);
+      }, timeout);
+    },
+    { once: true }
+  );
 }
