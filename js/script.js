@@ -1,5 +1,5 @@
 const CARDS_TO_DRAW = 2;
-const EMPTY_DECK = 48;
+const EMPTY_DECK = 0;
 let playerCard;
 let computerCard;
 let round = 1;
