@@ -321,11 +321,13 @@ main.container-flex {
     margin: 1.5rem;
     height: 20px;
     opacity: 0.5;
+    font-size: 1.8rem;
   }
 
   100% {
     margin: 1.5rem;
     height: 20px;
+    font-size: 1.8rem;
     opacity: 1;
   }
 }
@@ -335,18 +337,21 @@ main.container-flex {
     margin: 1.5rem;
     height: 20px;
     opacity: 1;
+    font-size: 1.8rem;
   }
 
   75% {
     margin: 1.5rem;
     height: 20px;
     opacity: 0.5;
+    font-size: 1.8rem;
   }
 
   100% {
     opacity: 0;
     margin: 0;
     height: 0;
+    font-size: 0;
   }
 }
 

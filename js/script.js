@@ -143,7 +143,9 @@ function roundWinnerAnimation(score) {
   roundMessage.addEventListener(
     "animationend",
     () => {
-      roundMessage.classList.add("main-round-winner-show");
+      setTimeout(() => {
+        roundMessage.classList.add("main-round-winner-show");
+      }, 150);
 
       updateScore(score);
     },
@@ -163,7 +165,7 @@ function updateScore(score) {
   setTimeout(() => {
     round++;
     buttonDraw.disabled = false;
-  }, 1500);
+  }, 2000);
 }
 
 function scoreAnimation(player, messageElem, message) {
@@ -172,7 +174,9 @@ function scoreAnimation(player, messageElem, message) {
   player.addEventListener(
     "animationend",
     () => {
-      player.classList.add("span-score-show");
+      setTimeout(() => {
+        player.classList.add("span-score-show");
+      }, 150);
       messageElem.textContent = message;
       player.textContent = +player.textContent + 1;
     },
