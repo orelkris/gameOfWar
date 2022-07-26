@@ -2,6 +2,7 @@ const CARDS_TO_DRAW = 2;
 let playerCard;
 let computerCard;
 let round = 1;
+let dataObj;
 
 const cardSequence = {
   2: 2,
@@ -51,6 +52,7 @@ function getDeck() {
     .then((res) => res.json())
     .then((data) => {
       deckId = data.deck_id;
+      dataObj = data;
 
       // now that the deck is available for usage, the draw button should be enabled
       buttonDraw.disabled = false;
@@ -71,7 +73,7 @@ function drawCards(id = deckId, cardAmount = CARDS_TO_DRAW) {
       // Player should not be able to press the draw button until the next round begins and the score is displayed
       buttonDraw.disabled = true;
 
-      updateDeckCountHtml(CARDS_TO_DRAW);
+      updateDeckCountHtml(data.remaining);
 
       createCardHtml(
         playerCardDiv,
@@ -184,8 +186,8 @@ function scoreAnimation(player, messageElem, message) {
   );
 }
 
-function updateDeckCountHtml(numCardsDrawn) {
-  remainingCards.textContent = +remainingCards.textContent - numCardsDrawn;
+function updateDeckCountHtml(remaining) {
+  remainingCards.textContent = remaining;
 }
 
 function updateButtonText(button, text) {
