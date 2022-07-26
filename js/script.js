@@ -1,5 +1,5 @@
 const CARDS_TO_DRAW = 2;
-const EMPTY_DECK = 0;
+const EMPTY_DECK = 48;
 let playerCard;
 let computerCard;
 let round = 1;
@@ -63,6 +63,8 @@ function getDeck() {
       });
     updateButtonText(buttonDeck, "Shuffle");
   }
+
+  buttonDeck.disabled = true;
 }
 
 function startGame(data, restart = false) {
@@ -295,6 +297,8 @@ function gameOver() {
         }
 
       `;
+
+        buttonDeck.disabled = false;
       },
       { once: true }
     );
