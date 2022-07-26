@@ -25,6 +25,8 @@ const computerCardDiv = document.getElementById("card-computer");
 const playerScore = document.querySelector("#player-score span");
 const computerScore = document.querySelector("#computer-score span");
 const roundMessage = document.getElementById("main-round-winner");
+const remainingCards = document.getElementById("remaining-cards");
+const buttonDeckText = document.getElementById("span-deck-text");
 
 // but default the draw button should be disabled until the deck of cards has been acquired
 const buttonDraw = document.getElementById("btn-draw-cards");
@@ -53,11 +55,13 @@ function getDeck() {
       // now that the deck is available for usage, the draw button should be enabled
       buttonDraw.disabled = false;
     });
+
+  updateButtonText(buttonDeck, "Shuffle");
 }
 
 function drawCards(id = deckId, cardAmount = CARDS_TO_DRAW) {
   fetch(
-    `https://apis.scrimba.com/deckofcards/api/deck/${deckId}/draw/?count=${2}`
+    `https://apis.scrimba.com/deckofcards/api/deck/${deckId}/draw/?count=${CARDS_TO_DRAW}`
   )
     .then((res) => res.json())
     .then((data) => {
@@ -66,6 +70,8 @@ function drawCards(id = deckId, cardAmount = CARDS_TO_DRAW) {
 
       // Player should not be able to press the draw button until the next round begins and the score is displayed
       buttonDraw.disabled = true;
+
+      updateDeckCountHtml(CARDS_TO_DRAW);
 
       createCardHtml(
         playerCardDiv,
@@ -157,7 +163,7 @@ function updateScore(score) {
   setTimeout(() => {
     round++;
     buttonDraw.disabled = false;
-  }, 2000);
+  }, 1500);
 }
 
 function scoreAnimation(player, messageElem, message) {
@@ -172,4 +178,12 @@ function scoreAnimation(player, messageElem, message) {
     },
     { once: true }
   );
+}
+
+function updateDeckCountHtml(numCardsDrawn) {
+  remainingCards.textContent = +remainingCards.textContent - numCardsDrawn;
+}
+
+function updateButtonText(button, text) {
+  button.textContent = text;
 }
