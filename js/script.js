@@ -1,4 +1,5 @@
 const CARDS_TO_DRAW = 2;
+const EMPTY_DECK = 0;
 let playerCard;
 let computerCard;
 let round = 1;
@@ -19,12 +20,13 @@ const cardSequence = {
 };
 
 const buttonDeck = document.getElementById("btn-new-deck");
-const playerCardDiv = document.getElementById("card-player");
-const computerCardDiv = document.getElementById("card-computer");
+let playerCardDiv = document.getElementById("card-player");
+let computerCardDiv = document.getElementById("card-computer");
 const playerScore = document.querySelector("#player-score span");
 const computerScore = document.querySelector("#computer-score span");
 const roundMessage = document.getElementById("main-round-winner");
 const remainingCards = document.getElementById("remaining-cards");
+const remainingCardsHeader = document.getElementById("remaining-cards-header");
 const buttonDeckText = document.getElementById("span-deck-text");
 
 // but default the draw button should be disabled until the deck of cards has been acquired
@@ -46,27 +48,54 @@ buttonDraw.addEventListener("click", (event) => {
 });
 
 function getDeck() {
-  fetch("https://apis.scrimba.com/deckofcards/api/deck/new/shuffle/")
-    .then((res) => res.json())
-    .then((data) => {
-      deckId = data.deck_id;
+  if (buttonDeck.innerText === "Shuffle") {
+    fetch(`https://apis.scrimba.com/deckofcards/api/deck/${deckId}/shuffle/`)
+      .then((res) => res.json())
+      .then((data) => {
+        startGame(data.remaining, true);
+      });
+  } else {
+    fetch("https://apis.scrimba.com/deckofcards/api/deck/new/shuffle/")
+      .then((res) => res.json())
+      .then((data) => {
+        deckId = data.deck_id;
+        startGame(data.remaining);
+      });
+    updateButtonText(buttonDeck, "Shuffle");
+  }
+}
 
-      // now that the deck is available for usage, the draw button should be enabled
-      buttonDraw.disabled = false;
+function startGame(data, restart = false) {
+  // now that the deck is available for usage, the draw button should be enabled
+  buttonDraw.disabled = false;
 
-      updateTextHtml(
-        document.getElementById("remaining-cards-header"),
-        "Remaining Cards:"
-      );
+  updateTextHtml(remainingCardsHeader, "Remaining Cards:");
 
-      updateTextHtml(remainingCards, data.remaining);
-    });
-  updateButtonText(buttonDeck, "Shuffle");
+  updateTextHtml(remainingCards, data);
+
+  if (restart) {
+    const cards = document.getElementById("cards");
+    cards.innerHTML = `
+    <div id="card-player"></div>
+    <div id="card-computer"></div>
+    `;
+
+    playerCardDiv = document.getElementById("card-player");
+    computerCardDiv = document.getElementById("card-computer");
+
+    roundMessage.classList.remove("main-round-winner-hide");
+
+    roundMessage.classList.add("main-round-winner-initial");
+
+    updateTextHtml(playerScore, 0);
+    updateTextHtml(computerScore, 0);
+    round = 1;
+  }
 }
 
 function drawCards(id = deckId, cardAmount = CARDS_TO_DRAW) {
   fetch(
-    `https://apis.scrimba.com/deckofcards/api/deck/${deckId}/draw/?count=${CARDS_TO_DRAW}`
+    `https://apis.scrimba.com/deckofcards/api/deck/${id}/draw/?count=${CARDS_TO_DRAW}`
   )
     .then((res) => res.json())
     .then((data) => {
@@ -96,7 +125,7 @@ function drawCards(id = deckId, cardAmount = CARDS_TO_DRAW) {
         if (round === 1) {
           roundWinnerAnimationOnce(score);
         } else {
-          roundWinnerAnimation(score);
+          roundWinnerAnimation(score, data.remaining);
         }
       }, 400);
     });
@@ -148,7 +177,7 @@ function roundWinnerAnimationOnce(score) {
   updateScore(score);
 }
 
-function roundWinnerAnimation(score) {
+function roundWinnerAnimation(score, totalCardCount = 52) {
   roundMessage.classList.remove("main-round-winner-show");
   roundMessage.classList.add("main-round-winner-hide");
   roundMessage.addEventListener(
@@ -156,21 +185,31 @@ function roundWinnerAnimation(score) {
     () => {
       setTimeout(() => {
         roundMessage.classList.add("main-round-winner-show");
+        roundMessage.classList.remove("main-round-winner-hide");
       }, 800);
 
-      updateScore(score);
+      if (totalCardCount === EMPTY_DECK) {
+        updateScore(score, true);
+      } else {
+        updateScore(score);
+      }
     },
     { once: true }
   );
 }
 
-function updateScore(score) {
+function updateScore(score, endOfGame = false) {
   if (score === -1) {
     roundMessage.textContent = "It's a tie!";
   } else if (score) {
     scoreAnimation(playerScore, roundMessage, "You win this round!");
   } else {
     scoreAnimation(computerScore, roundMessage, "You lose this round :(");
+  }
+
+  if (endOfGame) {
+    gameOver();
+    return;
   }
 
   setTimeout(() => {
@@ -188,6 +227,7 @@ function scoreAnimation(player, messageElem, message) {
 }
 
 function updateTextHtml(element, remaining) {
+  fadeIn(element);
   element.textContent = remaining;
 }
 
@@ -208,4 +248,55 @@ function hideShowAnimation(element, hide, show, timeout = 500) {
     },
     { once: true }
   );
+}
+
+function fadeIn(element) {
+  if (element.classList.contains("fade-out")) {
+    element.classList.remove("fade-out");
+    element.classList.add("fade-in");
+  } else {
+    element.classList.add("fade-in");
+  }
+}
+
+function fadeOut(element) {
+  if (element.classList.contains("fade-in")) {
+    element.classList.remove("fade-in");
+    element.classList.add("fade-out");
+  } else {
+    element.classList.add("fade-out");
+  }
+}
+
+function gameOver() {
+  buttonDraw.disabled = true;
+  const cards = document.getElementById("cards");
+
+  setTimeout(() => {
+    roundMessage.classList.remove("main-round-winner-show");
+    roundMessage.classList.add("main-round-winner-hide");
+    fadeOut(cards);
+    fadeOut(remainingCardsHeader);
+    fadeOut(remainingCards);
+
+    cards.addEventListener(
+      "animationend",
+      () => {
+        roundMessage.classList.add("hidden");
+        cards.classList.add("large-font");
+        fadeIn(cards);
+        cards.textContent = `
+        ${
+          +playerScore.textContent > +computerScore.textContent
+            ? "You won!"
+            : +computerScore.textContent === +playerScore.textContent
+            ? "It's a tie!"
+            : "You lost :("
+        }
+
+      `;
+      },
+      { once: true }
+    );
+  }, 3000);
 }

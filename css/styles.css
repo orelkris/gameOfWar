@@ -90,7 +90,7 @@ h2 span {
 }
 
 .large-font {
-  font-size: 1.5sem;
+  font-size: 2rem;
 }
 
 .font-bold {
@@ -212,10 +212,6 @@ main.container-flex {
 }
 
 .header h3 {
-  font-size: 1.2rem;
-}
-
-.header h3 {
   margin: 0;
   font-size: 1.5rem;
   display: flex;
@@ -312,6 +308,21 @@ main.container-flex {
 .span-score-show {
   animation: showSpan 500ms ease forwards;
 }
+
+.fade-in {
+  animation: showSpan 2s ease forwards;
+}
+
+.fade-out {
+  animation: hideSpan 2s ease forwards;
+}
+
+.hidden {
+  display: none;
+  margin: 0;
+  height: 0;
+}
+
 @keyframes show {
   0% {
     opacity: 0;
