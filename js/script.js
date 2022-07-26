@@ -145,7 +145,7 @@ function roundWinnerAnimation(score) {
     () => {
       setTimeout(() => {
         roundMessage.classList.add("main-round-winner-show");
-      }, 150);
+      }, 500);
 
       updateScore(score);
     },
@@ -176,7 +176,7 @@ function scoreAnimation(player, messageElem, message) {
     () => {
       setTimeout(() => {
         player.classList.add("span-score-show");
-      }, 150);
+      }, 500);
       messageElem.textContent = message;
       player.textContent = +player.textContent + 1;
     },
